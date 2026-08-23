@@ -37,7 +37,7 @@ export function createInitialProfile(profile: ProfileType): UserProfileData {
     profile,
     name: profile === 'nibir' ? 'Nibir' : 'Maitreyan',
     targetDailyHours: 10,
-    quote: profile === 'nibir' ? '148 Days. 1 Goal. AIR Under 100.' : 'Consistency beats talent when talent stops working.',
+    quote: profile === 'nibir' ? '148 Days. 1 Goal. AIR Under 10,000 (95+ Percentile).' : 'Consistency beats talent when talent stops working. Target: AIR < 10k.',
     chapters: [], // Completely empty as requested!
     dailyLogs: createEmptyDailyLogs(),
   };
@@ -68,6 +68,12 @@ export function loadProfileData(profile: ProfileType): UserProfileData {
     
     if (!Array.isArray(parsed.chapters)) {
       parsed.chapters = [];
+    }
+
+    // Auto-update quote if using the previous default AIR 100 quote
+    if (parsed.quote === '148 Days. 1 Goal. AIR Under 100.') {
+      parsed.quote = '148 Days. 1 Goal. AIR Under 10,000 (95+ Percentile).';
+      saveProfileData(parsed);
     }
 
     return parsed;

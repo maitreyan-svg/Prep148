@@ -663,6 +663,27 @@ export const Mission148Calendar: React.FC<Mission148CalendarProps> = ({
                         </div>
                       </div>
 
+                      {/* 95+ Percentile & AIR <10k Benchmark Gauge */}
+                      <div className="flex items-center justify-between text-xs font-mono px-3 py-2 rounded-lg bg-[#09090B] border border-[#27272A]">
+                        <div className="flex items-center gap-2">
+                          <span className="text-zinc-400 text-[11px]">95+%ile Benchmark:</span>
+                          {(selectedLog.mockTest?.score || 0) >= 150 ? (
+                            <span className="text-emerald-400 font-bold flex items-center gap-1">
+                              <span>🎯 95+ Percentile Achieved! (AIR &lt;10k Pace)</span>
+                            </span>
+                          ) : (selectedLog.mockTest?.score || 0) >= 120 ? (
+                            <span className="text-amber-400 font-semibold flex items-center gap-1">
+                              <span>⚡ 90–94 %ile (Gap to 95%: {150 - (selectedLog.mockTest?.score || 0)} marks)</span>
+                            </span>
+                          ) : (
+                            <span className="text-zinc-400 flex items-center gap-1">
+                              <span>🎯 Target: 150+ Marks for 95+ %ile (AIR &lt;10k)</span>
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-[10px] text-zinc-500 hidden sm:inline">150+ / 300</span>
+                      </div>
+
                       <div>
                         <label className="text-[10px] font-mono text-zinc-400 block mb-1">
                           Test Analysis & Mistake Review:

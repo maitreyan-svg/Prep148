@@ -48,8 +48,8 @@ export const Header: React.FC<HeaderProps> = ({
                   NIBIR MAITREYAN — <span className="text-amber-500 font-bold">JEE MISSION 148</span>
                 </h1>
               </div>
-              <p className="text-[10px] tracking-[0.4em] text-zinc-500 uppercase mt-1 pl-4">
-                148 DAYS. ONE MISSION. // JEE MAIN 2027
+              <p className="text-[10px] tracking-[0.3em] text-zinc-400 uppercase mt-1 pl-4 font-mono">
+                148 DAYS. ONE MISSION. // TARGET: AIR &lt; 10,000 (95+ %ILE)
               </p>
             </div>
 

@@ -147,7 +147,7 @@ export const DualComparisonView: React.FC<DualComparisonViewProps> = ({
             </div>
 
             <p className="text-xs text-zinc-300 italic mb-6 bg-[#09090B] p-2.5 rounded-xl border border-[#27272A]">
-              "{nibirData.quote || '148 Days. 1 Goal. AIR Under 100.'}"
+              "{nibirData.quote || '148 Days. 1 Goal. AIR Under 10,000 (95+ Percentile).'}"
             </p>
 
             {/* Quick Metrics */}

@@ -56,13 +56,16 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
               <span className="text-[10px] text-zinc-400 font-mono tracking-wider">JEE MAIN 2027</span>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-light tracking-wide text-[#F4F4F5]">
-              Target: <span className="font-bold text-amber-500">AIR Under 100</span>
+            <h2 className="text-2xl sm:text-3xl font-light tracking-wide text-[#F4F4F5] flex flex-wrap items-center gap-2">
+              <span>Target:</span>
+              <span className="font-bold text-amber-500">AIR Under 10,000</span>
+              <span className="text-zinc-600 font-light">•</span>
+              <span className="font-semibold text-emerald-400 text-xl sm:text-2xl">95+ Percentile</span>
             </h2>
 
             <p className="text-xs text-zinc-400 max-w-xl italic flex items-center gap-2">
               <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-              <span>"{profileData.quote || '148 Days. 1 Goal. AIR Under 100.'}"</span>
+              <span>"{profileData.quote || '148 Days. 1 Goal. AIR Under 10,000 (95+ Percentile).'}"</span>
             </p>
           </div>
 
@@ -357,11 +360,11 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
           </div>
 
           <div className="bg-[#09090B] p-3 rounded-xl border border-[#27272A]">
-            <div className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 mb-1">
-              AIR 100 Target
+            <div className="text-[10px] font-mono uppercase tracking-widest text-emerald-400 font-bold mb-1">
+              95+%ile (AIR &lt;10k)
             </div>
-            <div className="text-xl sm:text-2xl font-bold font-mono text-amber-500 flex items-center gap-1.5">
-              <span>260+</span>
+            <div className="text-xl sm:text-2xl font-bold font-mono text-emerald-400 flex items-center gap-1.5">
+              <span>150+</span>
               <span className="text-xs text-zinc-500 font-normal">/300</span>
             </div>
           </div>
