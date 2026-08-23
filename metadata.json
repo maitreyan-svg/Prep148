@@ -1,0 +1,6 @@
+{
+  "name": "Nibir Maitreyan — JEE Mission 148",
+  "description": "JEE Main 2027 148-Day Mission Tracker for Nibir & Maitreyan with dual accountability, chapter syllabus manager, and daily study log.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
