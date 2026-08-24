@@ -1,7 +1,8 @@
-import { DailyLog, ProfileType, UserProfileData } from '../types';
+import { DailyLog, UserProfileData } from '../types';
 import { getDateForDay, TOTAL_MISSION_DAYS } from './dateUtils';
 
-const STORAGE_KEY_PREFIX = 'jee_mission_148_v1_';
+const STORAGE_KEY_PREFIX = 'jee_mission_148_v2_';
+const GUEST_STORAGE_KEY = `${STORAGE_KEY_PREFIX}my_profile`;
 
 export function createEmptyDailyLogs(): Record<number, DailyLog> {
   const logs: Record<number, DailyLog> = {};
@@ -32,29 +33,48 @@ export function createEmptyDailyLogs(): Record<number, DailyLog> {
   return logs;
 }
 
-export function createInitialProfile(profile: ProfileType): UserProfileData {
+export function createInitialProfile(username?: string, name?: string): UserProfileData {
+  const effectiveUsername = username || 'aspirant';
+  const effectiveName = name || (username ? username.charAt(0).toUpperCase() + username.slice(1) : 'My JEE Mission');
   return {
-    profile,
-    name: profile === 'nibir' ? 'Nibir' : 'Maitreyan',
+    profile: effectiveUsername,
+    username: effectiveUsername,
+    name: effectiveName,
     targetDailyHours: 10,
-    quote: profile === 'nibir' ? '148 Days. 1 Goal. AIR Under 10,000 (95+ Percentile).' : 'Consistency beats talent when talent stops working. Target: AIR < 10k.',
-    chapters: [], // Completely empty as requested!
+    targetPercentile: '95+ Percentile (AIR < 10,000)',
+    quote: '148 Days. 1 Goal. AIR Under 10,000 (95+ Percentile).',
+    isPublic: true,
+    chapters: [], // Clean syllabus tracker
     dailyLogs: createEmptyDailyLogs(),
   };
 }
 
-export function loadProfileData(profile: ProfileType): UserProfileData {
+export function loadProfileData(profileId = 'my_profile'): UserProfileData {
   try {
-    const key = `${STORAGE_KEY_PREFIX}${profile}`;
+    const key = profileId === 'my_profile' ? GUEST_STORAGE_KEY : `${STORAGE_KEY_PREFIX}${profileId}`;
     const raw = localStorage.getItem(key);
+    
+    // Also check legacy storage key if migrating
+    if (!raw && profileId === 'my_profile') {
+      const legacyRaw = localStorage.getItem('jee_mission_148_v1_nibir') || localStorage.getItem('jee_mission_148_v1_my_profile');
+      if (legacyRaw) {
+        try {
+          const legacyParsed = JSON.parse(legacyRaw) as UserProfileData;
+          saveProfileData(legacyParsed, 'my_profile');
+          return legacyParsed;
+        } catch (_) {}
+      }
+    }
+
     if (!raw) {
-      const initial = createInitialProfile(profile);
-      saveProfileData(initial);
+      const initial = createInitialProfile(profileId, profileId === 'my_profile' ? 'My Mission' : profileId);
+      saveProfileData(initial, profileId);
       return initial;
     }
+
     const parsed = JSON.parse(raw) as UserProfileData;
     
-    // Ensure all 148 dailyLogs exist and sync formatted dates
+    // Ensure all 148 dailyLogs exist and sync formatted dates (Day 1: 24 Aug 2026)
     const emptyLogs = createEmptyDailyLogs();
     parsed.dailyLogs = { ...emptyLogs, ...(parsed.dailyLogs || {}) };
 
@@ -70,64 +90,51 @@ export function loadProfileData(profile: ProfileType): UserProfileData {
       parsed.chapters = [];
     }
 
-    // Auto-update quote if using the previous default AIR 100 quote
-    if (parsed.quote === '148 Days. 1 Goal. AIR Under 100.') {
+    if (!parsed.quote || parsed.quote === '148 Days. 1 Goal. AIR Under 100.') {
       parsed.quote = '148 Days. 1 Goal. AIR Under 10,000 (95+ Percentile).';
-      saveProfileData(parsed);
+      saveProfileData(parsed, profileId);
     }
 
     return parsed;
   } catch (err) {
-    console.error(`Failed to load profile ${profile}:`, err);
-    return createInitialProfile(profile);
+    console.error(`Failed to load profile ${profileId}:`, err);
+    return createInitialProfile(profileId);
   }
 }
 
-export function saveProfileData(data: UserProfileData): void {
+export function saveProfileData(data: UserProfileData, profileId = 'my_profile'): void {
   try {
-    const key = `${STORAGE_KEY_PREFIX}${data.profile}`;
+    const key = profileId === 'my_profile' ? GUEST_STORAGE_KEY : `${STORAGE_KEY_PREFIX}${profileId}`;
     localStorage.setItem(key, JSON.stringify(data));
   } catch (err) {
-    console.error(`Failed to save profile ${data.profile}:`, err);
+    console.error(`Failed to save profile:`, err);
   }
 }
 
-export function exportAllData(): string {
-  const nibir = loadProfileData('nibir');
-  const maitreyan = loadProfileData('maitreyan');
+export function exportAllData(currentData?: UserProfileData): string {
+  const data = currentData || loadProfileData('my_profile');
   const payload = {
-    appName: 'Nibir Maitreyan — JEE Mission 148',
+    appName: 'JEE Mission 148',
     exportedAt: new Date().toISOString(),
-    version: '1.0',
-    profiles: {
-      nibir,
-      maitreyan,
-    },
+    version: '2.0',
+    profile: data,
   };
   return JSON.stringify(payload, null, 2);
 }
 
-export function importAllData(jsonString: string): boolean {
+export function importAllData(jsonString: string): UserProfileData | null {
   try {
     const parsed = JSON.parse(jsonString);
-    if (parsed && parsed.profiles) {
-      if (parsed.profiles.nibir) {
-        saveProfileData(parsed.profiles.nibir);
+    if (parsed && (parsed.profile || parsed.profiles)) {
+      const dataToSave = parsed.profile || parsed.profiles?.nibir || Object.values(parsed.profiles)[0];
+      if (dataToSave) {
+        saveProfileData(dataToSave, 'my_profile');
+        return dataToSave;
       }
-      if (parsed.profiles.maitreyan) {
-        saveProfileData(parsed.profiles.maitreyan);
-      }
-      return true;
     }
-    return false;
+    return null;
   } catch (err) {
     console.error('Import failed:', err);
-    return false;
+    return null;
   }
-}
-
-export function resetProfileData(profile: ProfileType): UserProfileData {
-  const initial = createInitialProfile(profile);
-  saveProfileData(initial);
-  return initial;
 }

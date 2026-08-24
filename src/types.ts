@@ -1,5 +1,5 @@
 export type SubjectType = 'physics' | 'chemistry' | 'mathematics';
-export type ProfileType = 'nibir' | 'maitreyan';
+export type ProfileType = string;
 
 export type DayStatus = 'completed' | 'in-progress' | 'rest' | 'untracked';
 
@@ -64,10 +64,13 @@ export interface DailyLog {
 }
 
 export interface UserProfileData {
-  profile: ProfileType;
+  profile?: ProfileType;
+  username?: string;
   name: string;
   targetDailyHours: number;
+  targetPercentile?: string;
   quote?: string;
+  isPublic?: boolean;
   chapters: Chapter[];
   dailyLogs: Record<number, DailyLog>; // Day 1 to 148
 }
@@ -92,3 +95,73 @@ export interface MissionStats {
   avgMockScore?: number;
   highestMockScore?: number;
 }
+
+export interface UserAccount {
+  id: string;
+  username: string;
+  email: string;
+  name: string;
+  avatar: string;
+  isPublic: boolean;
+  targetDailyHours: number;
+  targetPercentile: string;
+  quote: string;
+  createdAt: string;
+  privacySettings: {
+    showSubjectBreakdown: boolean;
+    showStreaks: boolean;
+    showStudyHours: boolean;
+    showDailyLogs: boolean;
+  };
+}
+
+export interface PublicUserProfile {
+  id: string;
+  username: string;
+  name: string;
+  avatar: string;
+  quote: string;
+  targetDailyHours: number;
+  targetPercentile: string;
+  isPublic: boolean;
+  stats: MissionStats & {
+    completedLectures: number;
+    completedPyqs: number;
+    shortNotesCount: number;
+    avgDailyHours: number;
+    target148Progress: number;
+    currentDay: number;
+  };
+  subjectStats: {
+    physics: { chapters: number; completedChapters: number; lectures: number; pyqs: number; progress: number };
+    chemistry: { chapters: number; completedChapters: number; lectures: number; pyqs: number; progress: number };
+    mathematics: { chapters: number; completedChapters: number; lectures: number; pyqs: number; progress: number };
+  };
+  privacySettings?: {
+    showSubjectBreakdown: boolean;
+    showStreaks: boolean;
+    showStudyHours: boolean;
+    showDailyLogs: boolean;
+  };
+}
+
+export interface LeaderboardItem {
+  id: string;
+  rank: number;
+  username: string;
+  name: string;
+  avatar: string;
+  targetPercentile: string;
+  overallProgress: number;
+  totalStudyHours: number;
+  currentStreak: number;
+  totalPyqsCompleted: number;
+  totalLecturesCompleted: number;
+  totalRevisions: number;
+  completedChapters: number;
+  totalChapters: number;
+  avgDailyHours: number;
+  totalMockTests?: number;
+  highestMockScore?: number;
+}
+

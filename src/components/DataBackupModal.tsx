@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
-import { ProfileType } from '../types';
-import { exportAllData, importAllData, resetProfileData } from '../utils/storage';
-import { X, Download, Upload, RotateCcw, Check, AlertTriangle, FileJson } from 'lucide-react';
+import { exportAllData, importAllData } from '../utils/storage';
+import { X, Download, Upload, Check, AlertTriangle, FileJson } from 'lucide-react';
 
 interface DataBackupModalProps {
   isOpen: boolean;
   onClose: () => void;
-  activeProfile: ProfileType;
-  onDataChanged: () => void;
+  onExport?: () => void;
+  onImportSuccess?: () => void;
 }
 
 export const DataBackupModal: React.FC<DataBackupModalProps> = ({
   isOpen,
   onClose,
-  activeProfile,
-  onDataChanged,
+  onImportSuccess,
 }) => {
   const [importJson, setImportJson] = useState('');
   const [statusMsg, setStatusMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -41,23 +39,15 @@ export const DataBackupModal: React.FC<DataBackupModalProps> = ({
       return;
     }
 
-    const ok = importAllData(importJson);
-    if (ok) {
+    const res = importAllData(importJson);
+    if (res) {
       setStatusMsg({ type: 'success', text: 'Data imported successfully!' });
-      onDataChanged();
+      if (onImportSuccess) onImportSuccess();
       setTimeout(() => {
         onClose();
-      }, 1200);
+      }, 1000);
     } else {
       setStatusMsg({ type: 'error', text: 'Failed to parse JSON. Please check formatting.' });
-    }
-  };
-
-  const handleReset = () => {
-    if (window.confirm(`Reset ${activeProfile.toUpperCase()}'s data back to 0% progress and empty chapters?`)) {
-      resetProfileData(activeProfile);
-      setStatusMsg({ type: 'success', text: `${activeProfile.toUpperCase()} profile reset to empty state.` });
-      onDataChanged();
     }
   };
 
@@ -74,7 +64,7 @@ export const DataBackupModal: React.FC<DataBackupModalProps> = ({
             </div>
             <div>
               <h3 className="text-lg font-bold text-white">Data Management & Backup</h3>
-              <p className="text-xs text-zinc-400">Export or restore Nibir & Maitreyan mission records</p>
+              <p className="text-xs text-zinc-400">Export or restore your 148-day mission records</p>
             </div>
           </div>
 
@@ -101,61 +91,45 @@ export const DataBackupModal: React.FC<DataBackupModalProps> = ({
           )}
 
           {/* Export section */}
-          <div className="bg-[#09090B] p-4 rounded-2xl border border-[#27272A] flex items-center justify-between">
-            <div>
-              <h4 className="text-sm font-bold text-white mb-0.5">Export All Data</h4>
-              <p className="text-xs text-zinc-400">Save both Nibir and Maitreyan profiles as a .json backup file</p>
-            </div>
+          <div className="bg-[#09090B] p-4 rounded-2xl border border-[#27272A]">
+            <h4 className="text-sm font-bold text-white mb-1 flex items-center gap-2">
+              <Download className="w-4 h-4 text-amber-500" />
+              <span>Export JSON Snapshot</span>
+            </h4>
+            <p className="text-xs text-zinc-400 mb-3">
+              Download your complete syllabus, chapters, and 148-day study logs as a secure JSON snapshot.
+            </p>
             <button
               onClick={handleDownloadBackup}
-              className="px-4 py-2 bg-zinc-100 hover:bg-white text-black rounded-xl text-xs font-mono font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm"
+              className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-mono font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition cursor-pointer"
             >
               <Download className="w-4 h-4" />
-              <span>Download JSON</span>
+              <span>Download Mission Backup (.json)</span>
             </button>
           </div>
 
           {/* Import section */}
-          <div className="bg-[#09090B] p-4 rounded-2xl border border-[#27272A] space-y-3">
-            <div>
-              <h4 className="text-sm font-bold text-white mb-0.5">Import / Restore Backup</h4>
-              <p className="text-xs text-zinc-400">Paste JSON content below to restore all mission tracking data</p>
-            </div>
-
+          <div className="bg-[#09090B] p-4 rounded-2xl border border-[#27272A]">
+            <h4 className="text-sm font-bold text-white mb-1 flex items-center gap-2">
+              <Upload className="w-4 h-4 text-emerald-400" />
+              <span>Restore from Backup</span>
+            </h4>
+            <p className="text-xs text-zinc-400 mb-2">
+              Paste valid JSON backup text to restore your target and progress data.
+            </p>
             <textarea
+              rows={3}
               value={importJson}
               onChange={(e) => setImportJson(e.target.value)}
-              placeholder="Paste exported JSON here..."
-              rows={3}
-              className="w-full p-2.5 bg-[#18181B] border border-[#27272A] rounded-xl text-xs font-mono text-white placeholder-zinc-600 focus:outline-none focus:border-amber-500"
+              placeholder='Paste {"appName":"JEE Mission 148", ...} here...'
+              className="w-full bg-[#18181B] border border-[#27272A] rounded-xl p-3 text-xs font-mono text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 mb-3 resize-none"
             />
-
-            <div className="flex justify-end">
-              <button
-                onClick={handleImport}
-                className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-black rounded-xl text-xs font-mono font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
-              >
-                <Upload className="w-4 h-4" />
-                <span>Restore Data</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Reset profile */}
-          <div className="pt-2 border-t border-[#27272A] flex items-center justify-between">
             <button
-              onClick={handleReset}
-              className="px-3 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-xl text-xs font-mono font-bold flex items-center gap-1.5 transition cursor-pointer"
+              onClick={handleImport}
+              className="w-full py-2.5 bg-zinc-800 hover:bg-zinc-700 text-emerald-400 font-mono font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition border border-emerald-500/30 cursor-pointer"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Reset {activeProfile.toUpperCase()} (Start Clean)</span>
-            </button>
-
-            <button
-              onClick={onClose}
-              className="px-4 py-2 bg-[#09090B] hover:bg-zinc-800 text-white rounded-xl text-xs font-mono font-bold border border-[#27272A] transition cursor-pointer"
-            >
-              Close
+              <Upload className="w-4 h-4" />
+              <span>Restore Data</span>
             </button>
           </div>
         </div>
@@ -163,4 +137,3 @@ export const DataBackupModal: React.FC<DataBackupModalProps> = ({
     </div>
   );
 };
-

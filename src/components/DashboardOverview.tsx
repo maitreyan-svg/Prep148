@@ -37,7 +37,6 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
 }) => {
   const { currentDay, daysRemaining } = getCurrentMissionDayNumber();
   const dayProgressPct = Math.min(100, Math.round((currentDay / TOTAL_MISSION_DAYS) * 100));
-  const isNibir = profileData.profile === 'nibir';
 
   return (
     <div className="space-y-6">
@@ -118,7 +117,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
 
           <div className="w-full h-1.5 bg-[#09090B] rounded-full overflow-hidden border border-[#27272A]">
             <div
-              className={`h-full rounded-full ${isNibir ? 'bg-blue-500' : 'bg-emerald-500'} transition-all duration-500`}
+              className="h-full rounded-full bg-amber-500 transition-all duration-500"
               style={{ width: `${Math.max(1, dayProgressPct)}%` }}
             />
           </div>

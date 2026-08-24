@@ -1,6 +1,6 @@
-export const MISSION_START_DATE = new Date(2026, 7, 23, 0, 0, 0); // 23 Aug 2026 (Month is 0-indexed: 7 = August), Sunday
-export const MISSION_END_DATE = new Date(2027, 0, 17, 23, 59, 59); // 17 Jan 2027 (Day 148, Sunday)
-export const TARGET_EXAM_DATE = new Date(2027, 0, 18, 9, 0, 0); // 18 Jan 2027 9:00 AM (JEE Main 2027 Target)
+export const MISSION_START_DATE = new Date(2026, 7, 24, 0, 0, 0); // 24 Aug 2026 (Month is 0-indexed: 7 = August), Monday
+export const MISSION_END_DATE = new Date(2027, 0, 18, 23, 59, 59); // 18 Jan 2027 (Day 148, Monday)
+export const TARGET_EXAM_DATE = new Date(2027, 0, 19, 9, 0, 0); // 19 Jan 2027 9:00 AM (JEE Main 2027 Target)
 
 export const TOTAL_MISSION_DAYS = 148;
 

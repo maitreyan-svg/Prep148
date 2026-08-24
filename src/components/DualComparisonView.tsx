@@ -20,12 +20,14 @@ interface DualComparisonViewProps {
   nibirData: UserProfileData;
   maitreyanData: UserProfileData;
   onSwitchToProfile: (profile: ProfileType) => void;
+  onOpenCommunity?: () => void;
 }
 
 export const DualComparisonView: React.FC<DualComparisonViewProps> = ({
   nibirData,
   maitreyanData,
   onSwitchToProfile,
+  onOpenCommunity,
 }) => {
   const nibirStats: MissionStats = calculateProfileStats(nibirData);
   const maitreyanStats: MissionStats = calculateProfileStats(maitreyanData);
@@ -102,7 +104,16 @@ export const DualComparisonView: React.FC<DualComparisonViewProps> = ({
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {onOpenCommunity && (
+              <button
+                onClick={onOpenCommunity}
+                className="px-3.5 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 font-bold font-mono text-xs rounded-xl flex items-center gap-1.5 transition border border-amber-500/30 cursor-pointer"
+              >
+                <Trophy className="w-3.5 h-3.5" />
+                <span>Public Community & Leaderboard</span>
+              </button>
+            )}
             <button
               onClick={() => onSwitchToProfile('nibir')}
               className="px-4 py-2 bg-zinc-100 hover:bg-white text-black font-bold font-mono text-xs rounded-xl flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-sm"
