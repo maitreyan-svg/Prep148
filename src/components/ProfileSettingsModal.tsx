@@ -21,8 +21,10 @@ import { api } from '../utils/authApi';
 interface ProfileSettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  user: UserAccount;
-  onUserUpdate: (updatedUser: UserAccount) => void;
+  user?: UserAccount | null;
+  currentUser?: UserAccount | null;
+  onUserUpdate?: (updatedUser: UserAccount) => void;
+  onProfileUpdated?: (updatedUser: UserAccount) => void;
   onLogout: () => void;
   syncTimestamp?: string | null;
 }
@@ -30,11 +32,14 @@ interface ProfileSettingsModalProps {
 export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
   isOpen,
   onClose,
-  user,
+  user: userProp,
+  currentUser: currentUserProp,
   onUserUpdate,
+  onProfileUpdated,
   onLogout,
   syncTimestamp,
 }) => {
+  const activeUser = currentUserProp || userProp;
   const [activeTab, setActiveTab] = useState<'profile' | 'privacy' | 'security'>('profile');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,18 +47,18 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
   const [copiedLink, setCopiedLink] = useState(false);
 
   // Profile fields
-  const [name, setName] = useState(user.name || '');
-  const [username, setUsername] = useState(user.username || '');
-  const [quote, setQuote] = useState(user.quote || '');
-  const [targetDailyHours, setTargetDailyHours] = useState(user.targetDailyHours || 10);
-  const [targetPercentile, setTargetPercentile] = useState(user.targetPercentile || '95+ Percentile (AIR < 10,000)');
-  const [avatar, setAvatar] = useState(user.avatar || 'amber');
+  const [name, setName] = useState(activeUser?.name || '');
+  const [username, setUsername] = useState(activeUser?.username || '');
+  const [quote, setQuote] = useState(activeUser?.quote || '');
+  const [targetDailyHours, setTargetDailyHours] = useState(activeUser?.targetDailyHours || 10);
+  const [targetPercentile, setTargetPercentile] = useState(activeUser?.targetPercentile || '95+ Percentile (AIR < 10,000)');
+  const [avatar, setAvatar] = useState(activeUser?.avatar || 'amber');
 
   // Privacy fields
-  const [isPublic, setIsPublic] = useState(user.isPublic !== undefined ? user.isPublic : true);
-  const [showSubjectBreakdown, setShowSubjectBreakdown] = useState(user.privacySettings?.showSubjectBreakdown !== false);
-  const [showStreaks, setShowStreaks] = useState(user.privacySettings?.showStreaks !== false);
-  const [showStudyHours, setShowStudyHours] = useState(user.privacySettings?.showStudyHours !== false);
+  const [isPublic, setIsPublic] = useState(activeUser?.isPublic !== undefined ? activeUser.isPublic : true);
+  const [showSubjectBreakdown, setShowSubjectBreakdown] = useState(activeUser?.privacySettings?.showSubjectBreakdown !== false);
+  const [showStreaks, setShowStreaks] = useState(activeUser?.privacySettings?.showStreaks !== false);
+  const [showStudyHours, setShowStudyHours] = useState(activeUser?.privacySettings?.showStudyHours !== false);
 
   // Security / Password fields
   const [currentPassword, setCurrentPassword] = useState('');
@@ -61,6 +66,8 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
   const [confirmPassword, setConfirmPassword] = useState('');
 
   if (!isOpen) return null;
+
+  if (!isOpen || !activeUser) return null;
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,7 +85,8 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
         avatar,
       });
 
-      onUserUpdate(res.user);
+      if (onUserUpdate) onUserUpdate(res.user);
+      if (onProfileUpdated) onProfileUpdated(res.user);
       setSuccessMsg('Profile updated successfully!');
     } catch (err: any) {
       setError(err.message || 'Failed to update profile.');
@@ -104,7 +112,8 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
         },
       });
 
-      onUserUpdate(res.user);
+      if (onUserUpdate) onUserUpdate(res.user);
+      if (onProfileUpdated) onProfileUpdated(res.user);
       setSuccessMsg('Privacy preferences updated successfully!');
     } catch (err: any) {
       setError(err.message || 'Failed to update privacy settings.');
@@ -144,7 +153,7 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
   };
 
   const copyProfileLink = () => {
-    const url = `${window.location.origin}${window.location.pathname}?u=${encodeURIComponent(user.username)}`;
+    const url = `${window.location.origin}${window.location.pathname}?u=${encodeURIComponent(activeUser.username)}`;
     navigator.clipboard.writeText(url);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2500);
@@ -161,17 +170,17 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
           <div className="flex items-center justify-between pb-4 border-b border-[#27272A] mb-5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 font-mono font-bold text-lg">
-                @{user.username.charAt(0).toUpperCase()}
+                @{activeUser.username.charAt(0).toUpperCase()}
               </div>
               <div>
                 <h2 className="text-base font-bold text-white font-mono flex items-center gap-2">
-                  <span>{user.name || user.username}</span>
-                  <span className="text-xs font-normal text-amber-500 font-mono">@{user.username}</span>
+                  <span>{activeUser.name || activeUser.username}</span>
+                  <span className="text-xs font-normal text-amber-500 font-mono">@{activeUser.username}</span>
                 </h2>
                 <div className="flex items-center gap-2 text-[11px] text-zinc-400 font-mono">
-                  <span>{user.email}</span>
+                  <span>{activeUser.email}</span>
                   <span>•</span>
-                  {user.isPublic ? (
+                  {activeUser.isPublic ? (
                     <span className="text-emerald-400 flex items-center gap-1 font-semibold">
                       <Globe className="w-3 h-3" /> Public Profile
                     </span>

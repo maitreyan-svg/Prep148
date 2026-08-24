@@ -49,7 +49,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-widest uppercase border border-zinc-700 bg-[#09090B] text-zinc-300">
-                ACTIVE ASPIRANT: {profileData.name.toUpperCase()}
+                ACTIVE ASPIRANT: {(profileData?.name || profileData?.username || 'MY MISSION').toUpperCase()}
               </span>
               <span className="text-xs text-zinc-600 font-mono">•</span>
               <span className="text-[10px] text-zinc-400 font-mono tracking-wider">JEE MAIN 2027</span>

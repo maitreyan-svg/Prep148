@@ -280,15 +280,15 @@ export const PublicCommunityView: React.FC<PublicCommunityViewProps> = ({
                   key={res.id}
                   className="p-3 hover:bg-zinc-800/60 transition flex items-center justify-between gap-2"
                 >
-                  <div className="cursor-pointer" onClick={() => viewUserProfile(res.username)}>
-                    <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                      <span>{res.name}</span>
-                      <span className="text-amber-500 font-normal">@{res.username}</span>
+                    <div className="cursor-pointer" onClick={() => viewUserProfile(res.username)}>
+                      <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                        <span>{res.name || res.username}</span>
+                        <span className="text-amber-500 font-normal">@{res.username}</span>
+                      </div>
+                      <div className="text-[10px] text-zinc-400 mt-0.5">
+                        {res.overallProgress}% Progress • {res.totalStudyHours} hrs • {res.currentStreak}d Streak
+                      </div>
                     </div>
-                    <div className="text-[10px] text-zinc-400 mt-0.5">
-                      {res.overallProgress}% Progress • {res.totalStudyHours} hrs • {res.currentStreak}d Streak
-                    </div>
-                  </div>
 
                   <div className="flex items-center gap-1.5">
                     <button
@@ -425,7 +425,7 @@ export const PublicCommunityView: React.FC<PublicCommunityViewProps> = ({
                               </div>
                               <div>
                                 <div className="text-white group-hover:text-amber-400 transition font-bold flex items-center gap-1.5">
-                                  <span>{item.name}</span>
+                                  <span>{item.name || item.username}</span>
                                   {isCurrentUser && (
                                     <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-500 text-black font-bold">
                                       YOU
@@ -588,7 +588,7 @@ export const PublicCommunityView: React.FC<PublicCommunityViewProps> = ({
                       </div>
                       <div>
                         <h3 className="text-base font-bold text-white font-mono flex items-center gap-2">
-                          <span>{compareData.user1.name}</span>
+                          <span>{compareData.user1.name || compareData.user1.username}</span>
                           <span className="text-xs font-normal text-amber-500 font-mono">@{compareData.user1.username}</span>
                         </h3>
                         <p className="text-xs text-zinc-400 font-mono">{compareData.user1.targetPercentile}</p>
@@ -640,7 +640,7 @@ export const PublicCommunityView: React.FC<PublicCommunityViewProps> = ({
                       </div>
                       <div>
                         <h3 className="text-base font-bold text-white font-mono flex items-center gap-2">
-                          <span>{compareData.user2.name}</span>
+                          <span>{compareData.user2.name || compareData.user2.username}</span>
                           <span className="text-xs font-normal text-blue-400 font-mono">@{compareData.user2.username}</span>
                         </h3>
                         <p className="text-xs text-zinc-400 font-mono">{compareData.user2.targetPercentile}</p>
@@ -836,7 +836,7 @@ export const PublicCommunityView: React.FC<PublicCommunityViewProps> = ({
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-white flex items-center gap-2">
-                      <span>{selectedUserProfile.name}</span>
+                      <span>{selectedUserProfile.name || selectedUserProfile.username}</span>
                       <span className="text-xs font-normal text-amber-500">@{selectedUserProfile.username}</span>
                     </h3>
                     <p className="text-xs text-zinc-400">{selectedUserProfile.targetPercentile}</p>

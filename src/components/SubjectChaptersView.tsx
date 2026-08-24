@@ -35,15 +35,17 @@ export const SubjectChaptersView: React.FC<SubjectChaptersViewProps> = ({
   const [notesText, setNotesText] = useState('');
 
   // Filter chapters by tab and search
-  const filteredChapters = chapters.filter((c) => {
+  const filteredChapters = (chapters || []).filter((c) => {
+    if (!c) return false;
     const matchesTab = activeTab === 'all' || c.subject === activeTab;
-    const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const chapName = c.name || '';
+    const matchesSearch = chapName.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesTab && matchesSearch;
   });
 
-  const physicsCount = chapters.filter((c) => c.subject === 'physics').length;
-  const chemistryCount = chapters.filter((c) => c.subject === 'chemistry').length;
-  const mathsCount = chapters.filter((c) => c.subject === 'mathematics').length;
+  const physicsCount = (chapters || []).filter((c) => c && c.subject === 'physics').length;
+  const chemistryCount = (chapters || []).filter((c) => c && c.subject === 'chemistry').length;
+  const mathsCount = (chapters || []).filter((c) => c && c.subject === 'mathematics').length;
 
   const handleTriggerCelebration = () => {
     try {
