@@ -391,6 +391,11 @@ async function startServer() {
     });
   });
 
+  // Catch-all 404 for unhandled API requests
+  app.all('/api/*', (req, res) => {
+    res.status(404).json({ error: `API endpoint ${req.method} ${req.path} not found.` });
+  });
+
   // ==================== VITE & STATIC FILES SERVING ====================
 
   if (process.env.NODE_ENV !== 'production') {

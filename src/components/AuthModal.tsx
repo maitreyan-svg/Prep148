@@ -322,10 +322,32 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 )}
               </button>
 
-              <div className="pt-3 border-t border-[#27272A] text-center">
+              <div className="pt-3 border-t border-[#27272A] text-center space-y-2">
                 <p className="text-xs text-zinc-500 font-mono">
-                  Default profile accounts: <span className="text-zinc-300 font-bold">nibir</span> or <span className="text-zinc-300 font-bold">maitreyan</span>
+                  Quick Sign-In demo profiles:
                 </p>
+                <div className="flex items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIdentifier('nibir');
+                      setPassword('Target148@2027');
+                    }}
+                    className="px-2.5 py-1 rounded-lg bg-[#18181B] hover:bg-zinc-800 border border-[#27272A] text-[11px] font-mono text-amber-400 cursor-pointer transition"
+                  >
+                    @nibir (Demo)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIdentifier('maitreyan');
+                      setPassword('Target148@2027');
+                    }}
+                    className="px-2.5 py-1 rounded-lg bg-[#18181B] hover:bg-zinc-800 border border-[#27272A] text-[11px] font-mono text-emerald-400 cursor-pointer transition"
+                  >
+                    @maitreyan (Demo)
+                  </button>
+                </div>
               </div>
             </form>
           )}
